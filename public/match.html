@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Football</title>
+    <meta name="description" content="Football" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style type="text/css">
+      #image { width: 20%; 
+            height: auto;     
+            margin-left: auto;
+            margin-right: auto;
+
+           }
+      
+    </style>
+    <link rel="stylesheet" href="css/materialize.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/materialize.css">
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#00897B" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+  </head>
+  <body>
+       <!-- Navigasi -->
+    <nav class="teal lighten-1" role="navigation">
+      <div class="nav-wrapper container">
+        <a href="./" class="brand-logo" id="logo-container">Football</a>
+        <a href="./" class="sidenav-trigger" data-target="nav-mobile">
+          <i class="material-icons">arrow_back</i>
+        </a>
+        <ul class="topnav right hide-on-med-and-down"></ul>
+        <ul class="sidenav" id="nav-mobile"></ul>
+      </div>
+    </nav>
+    <!-- Akhir Navigasi -->
+    <div class="container" id="body-content">
+      
+      <div id="matchDetail"></div>
+    </div>
+    <script
+      type="text/javascript"
+      src="https://unpkg.com/snarkdown@1.0.2/dist/snarkdown.umd.js"
+    ></script>
+    <script src="js/materialize.min.js"></script>
+    <script src="js/api.js"></script>
+    <script type="text/javascript" src="js/indexeddb.js"></script>
+    <script type="text/javascript" src="js/database.js"></script>
+    <script type="text/javascript" src="js/idb.js"></script>
+    <script src="js/helper.js"></script>
+    <script>
+      // REGISTER SERVICE WORKER
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function() {
+          navigator.serviceWorker
+            .register("/service-worker.js")
+            .then(function() {
+              console.log("Pendaftaran ServiceWorker berhasil");
+            })
+            .catch(function() {
+              console.log("Pendaftaran ServiceWorker gagal");
+            });
+        });
+      } else {
+        console.log("ServiceWorker belum didukung browser ini.");
+      }
+
+      document.addEventListener("DOMContentLoaded", function() {
+
+        var iconFav = document.getElementById("iconFav");
+        var isFavorite = false
+        var urlParams = new URLSearchParams(window.location.search);
+        var idParam = Number(urlParams.get("id"));
+        
+        cekFavorite(idParam).then((msg) => {
+          console.log("message = "+  msg)
+          document.getElementById("iconFav").innerHTML = "favorite"
+          getMatchById()
+          isFavorite = true
+        }).catch((msg) => {
+          console.log("message = "+  msg)
+          document.getElementById("iconFav").innerHTML = "favorite_border"
+          getScheduleDetail()
+          isFavorite = false
+        })
+
+        iconFav.onclick = function () {
+          if (isFavorite) {
+            deleteFavorite(idParam);
+            isFavorite = false
+          } else {
+            item = getScheduleDetail();
+            item.then(function (dataMatch) {
+              createFav("match", dataMatch);
+            });
+            isFavorite = true
+          }
+        };
+
+      });
+    </script>
+    <div class="fixed-action-btn">
+      <a  class="btn-floating btn-large waves-effect waves-light red"><i id = "iconFav" class="material-icons">favorite_border</i></a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+   
+  </body>
+
+</html>
